@@ -2,6 +2,8 @@
 
 **GitHub Repository:** https://github.com/MeldinRadoncic/thehireme
 
+> ⚠️ **Note:** This is just the central hub that holds the four projects. Each project has its own separate GitHub repository and can be developed independently.
+
 ## Project Overview
 TheHireMe is a comprehensive platform with 4 separate repositories:
 
