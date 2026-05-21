@@ -1,0 +1,12 @@
+# Ignore subproject .git directories and node_modules
+client/.git
+worker/.git
+admin-dashboard/.git
+backend/.git
+client/node_modules
+worker/node_modules
+admin-dashboard/node_modules
+admin-dashboard/.next
+backend/node_modules
+.DS_Store
+*.log
