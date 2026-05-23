@@ -115,3 +115,55 @@ Languages — JSON files for static text per screen for all languages. Device la
 Edge cases:
 
 Location permission denied — force manual country and city selection. Offline at launch — show cached data or error. Saved location in unsupported country — ask to pick again. No workers in location — show "No workers found." Worker contact invalid — show error when trying to contact. Client not registered trying to review — prompt to login. Client tries to like without logging in — prompt to login. Same client watching video multiple times — each like counts. Client tries to like same video twice — prevent duplicate, show already liked. Worker profile fails to load — show error or placeholder. Share button fails — show error, let retry. Auto-detect button on worker list scrolls out of view when scrolling workers — reappears when scrolling back up. Worker has no social media — don't show empty section. Video deleted while viewing — show error message. Report abuse — admin dashboard gets report. Pagination loading state shown while fetching next batch. Filter modal closes after applying filters. Filter resets to defaults if user navigates away. Worker with zero credits doesn't show promotions section. Worker with no ratings shows "No reviews yet." Distance calculation based on GPS if auto-detect used, or based on registered location otherwise.
+
+---
+
+# Admin Dashboard
+
+## Complete Admin Dashboard Flow
+
+Super admin, admin, and member login with Clerk — email and password, Google, Facebook. No registration, only super admin can add admins and members.
+
+After login, dashboard homepage shows quick stats — total users, total workers, total clients, videos uploaded today, revenue made today, active promotions, pending reports.
+
+Users tab — lists all users as rows with avatar, name, email. Click user, see full profile — location, services, experience level, credits balance, total spent, join date, all images, all videos, all reviews given and received, promotions history, earnings history. Admin can delete user or suspend user with note explaining why. Super admin full delete/ban access, admin limited access, member view only.
+
+Admin management tab — visible only to super admin. Lists all admins and members with role, name, email. Super admin can add new admin or member by email, change their role, delete or remove them.
+
+Reports tab — shows all reported users, workers, reviews with reporter info, what was reported, reason. Admin clicks report, sees full details. Can delete reported content, suspend user temporarily with note explaining why, ban user permanently, add user to blocklist. User sees "Account suspended" or "Account banned" message on login with reason. Admin can unsuspend anytime. When suspending or banning, update Supabase user status to suspended, banned, or blocked, and send request to Clerk to disable account.
+
+Services tab — list all services with icons. Add new service with name and icon upload, edit service name or icon, delete service. Same for sub-services — add, edit, delete sub-services under each service.
+
+Packages tab — list all credit packages (one hundred, three hundred, six hundred, one thousand credits). Add new package with credit amount and price per country, edit prices, delete package.
+
+Promotions tab — create promotions for holidays or campaigns. Set promotion name, discount percentage, start date, end date, which services or packages apply. When active, discount applies to package prices automatically. Admin can create, edit, delete promotions.
+
+Error logs tab — shows all user errors with timestamp, user email, device type (Android or iOS), error message, stack trace. Search by email or error type. Click error to see full details. Mark error as resolved when fixed. Errors logged when users encounter issues during registration, login, service operations. Edge functions catch errors and log to Supabase with user context and device info.
+
+User status tracking — Supabase has user status column — active, suspended, banned, blocked. Admin actions update status and Clerk account simultaneously.
+
+Edge cases:
+
+Super admin password reset — Clerk handles automatically.
+
+Two admins edit same user simultaneously — whoever saves first wins, second gets error to refresh.
+
+Error logs get massive — paginate showing newest first, archive old errors after thirty days.
+
+Overlapping promotions — warning shown in admin dashboard, admin decides which applies.
+
+Admin with limited permissions tries to delete super admin — permission check prevents action.
+
+User reported multiple times — show all reports together.
+
+Deleted user's data — cascade delete their reviews, videos, images, earnings history.
+
+User suspension lifted — update status in Supabase and Clerk back to active.
+
+Blocked user tries to register with new email — identify by pattern or manual review.
+
+Critical errors occur — logged in error tab, admin checks periodically, no automated email notifications for MVP.
+
+Dashboard homepage responsive — works on mobile, tablet, laptop, desktop, all screen sizes.
+
+Admin dashboard fully responsive across all devices.
