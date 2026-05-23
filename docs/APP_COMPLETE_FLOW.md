@@ -167,3 +167,39 @@ Critical errors occur — logged in error tab, admin checks periodically, no aut
 Dashboard homepage responsive — works on mobile, tablet, laptop, desktop, all screen sizes.
 
 Admin dashboard fully responsive across all devices.
+
+---
+
+# Backend App
+
+## Complete Backend Application Flow
+
+Backend serves all three apps—worker app, client app, admin dashboard. Runs locally with Docker for development using local Supabase instance. Deploys to production on Supabase Pro plan. 
+
+Security—validate and sanitize all input server-side, never trust client data. Row Level Security policies in Supabase so users only access their own data. Workers see only their profile, videos, promotions, reviews, earnings. Clients see only their reviews, liked videos. Admins access by role—super admin full, admin limited, member view-only. 
+
+Authentication—Clerk handles auth tokens for all apps. Token validated on every request. Expired tokens return 401 error, client refreshes token. 
+
+Pagination—all list endpoints paginate results. Worker list loads 50 items per batch. Error logs paginate, newest first. 
+
+Security—validate all input server-side, never trust client data. Rate limiting—limit requests per user per minute to prevent abuse and control Supabase costs. Return 429 error if exceeded, client waits before retrying. 
+
+Caching—cache frequently accessed data like services, countries, credit packages. Short TTL like 5 minutes for changing data, longer TTL for static data. Clear cache on write so data stays fresh. 
+
+Load testing—use k6 or Artillery to simulate hundreds or thousands of concurrent users. Run before production to identify bottlenecks. 
+
+Stripe webhook integration—Stripe sends payment success notifications to webhook endpoint. Webhook verifies signature, checks if user exists, adds credits only after confirmed payment. If webhook fails, retry logic handles it. 
+
+Error handling—all errors logged in error table with timestamp, user email, device type, error message, stack trace. Admin reviews errors periodically. 
+
+Database indexes—add indexes on frequently queried columns like user ID, service ID, country for fast lookups. 
+
+Concurrent writes—use timestamp tracking. If two admins edit same user, first save wins. 
+
+Authentication flow—all apps use Clerk for auth. Token sent with each request, validated server-side, return 401 if invalid. 
+
+Connection pooling—use Supabase connection pooling to manage database connections efficiently, prevent pool exhaustion. 
+
+Async operations—long operations split into smaller batches processed asynchronously. Stripe webhook retries—failed payments retry automatically. 
+
+RLS policies tested locally before production. Edge functions like biometric handled client-side. Input validation on all endpoints before processing.
